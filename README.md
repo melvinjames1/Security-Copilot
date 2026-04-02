@@ -1,71 +1,186 @@
-# security-copilot README
+# 🔐 Security Copilot — VS Code Extension
 
-This is the README for your extension "security-copilot". After writing up a brief description, we recommend including the following sections.
+> Scan your project for vulnerabilities and get AI-powered fix suggestions — runs **100% locally**, no data leaves your machine.
 
-## Features
+![Version](https://img.shields.io/badge/version-0.0.1-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+![VS Code](https://img.shields.io/badge/VS%20Code-1.85%2B-blueviolet)
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+-----
 
-For example if there is an image subfolder under your extension project workspace:
+## ✨ Features
 
-\!\[feature X\]\(images/feature-x.png\)
+- 🔍 **Detects OWASP Top 10 vulnerabilities** across your entire project
+- 🤖 **AI-powered fix suggestions** via local LLM (no API key needed)
+- 🔒 **Fully offline** — your code never leaves your machine
+- ⚡ **Supports** JavaScript, TypeScript, Python, Go, Java and more
+- 📋 **Detailed report panel** with severity levels and fix suggestions
+- 💡 **Inline diagnostics** — squiggly lines on vulnerable code
+- 🛠️ **One-click fixes** via CodeLens buttons
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+-----
 
-## Requirements
+## 📋 Requirements
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+Before using this extension, install the following tools:
 
-## Extension Settings
+### 1. Ollama (for AI fix suggestions)
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+```bash
+# macOS / Linux
+curl -fsSL https://ollama.com/install.sh | sh
 
-For example:
+# Then pull a code model
+ollama pull codellama
+```
 
-This extension contributes the following settings:
+Download for Windows at [ollama.com](https://ollama.com)
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+### 2. Semgrep (for vulnerability scanning)
 
-## Known Issues
+```bash
+# macOS
+brew install semgrep
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+# Linux / Windows (via pip)
+pip install semgrep
+```
 
-## Release Notes
+> **Note:** The extension works in degraded mode (static analysis only) if Ollama is not installed.
 
-Users appreciate release notes as you update your extension.
+-----
 
-### 1.0.0
+## 🚀 Usage
 
-Initial release of ...
+1. Open any project folder in VS Code
+1. Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on Mac)
+1. Run one of the following commands:
 
-### 1.0.1
+|Command                                 |Description            |
+|----------------------------------------|-----------------------|
+|`Security Copilot: Scan Current File`   |Scan only the open file|
+|`Security Copilot: Scan Entire Project` |Full workspace scan    |
+|`Security Copilot: Show Security Report`|Open the report panel  |
+|`Security Copilot: Apply Fix`           |Apply a suggested fix  |
 
-Fixed issue #.
+-----
 
-### 1.1.0
+## 📊 Vulnerability Severity Levels
 
-Added features X, Y, and Z.
+|Level     |Description              |
+|----------|-------------------------|
+|🔴 Critical|Immediate action required|
+|🟠 High    |Fix as soon as possible  |
+|🟡 Medium  |Fix in next release      |
+|🔵 Low     |Best practice improvement|
 
----
+-----
 
-## Following extension guidelines
+## 🏗️ How It Works
 
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
+```
+Your Code
+    ↓
+Semgrep (detects vulnerabilities with precise rules)
+    ↓
+Local LLM via Ollama (generates human-readable explanations + fixes)
+    ↓
+VS Code Report Panel + Inline Diagnostics
+```
 
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
+Everything runs locally on your machine. No cloud. No telemetry. No API keys.
 
-## Working with Markdown
+-----
 
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
+## ⚙️ Extension Settings
 
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
+|Setting                            |Default                 |Description               |
+|-----------------------------------|------------------------|--------------------------|
+|`securityCopilot.ollamaUrl`        |`http://localhost:11434`|Ollama server URL         |
+|`securityCopilot.model`            |`codellama`             |Local model to use        |
+|`securityCopilot.scanOnSave`       |`false`                 |Auto-scan on file save    |
+|`securityCopilot.severityThreshold`|`medium`                |Minimum severity to report|
 
-## For more information
+-----
 
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+## 🛠️ Local Development
 
-**Enjoy!**
+```bash
+# Clone the repo
+git clone https://github.com/your-username/security-copilot
+cd security-copilot
+
+# Install dependencies
+npm install
+
+# Open in VS Code
+code .
+
+# Press F5 to launch Extension Development Host
+```
+
+-----
+
+## 🗂️ Project Structure
+
+```
+security-copilot/
+├── src/
+│   ├── extension.ts        # Entry point, command registration
+│   ├── scanner.ts          # File collection + Semgrep integration
+│   ├── claudeClient.ts     # Local LLM (Ollama) client
+│   ├── reportParser.ts     # JSON parsing + validation
+│   ├── diagnostics.ts      # Inline squiggly lines
+│   ├── codelens.ts         # Fix buttons above vulnerable lines
+│   └── webview/
+│       ├── panel.ts        # Report panel logic
+│       └── report.html     # Report UI
+├── package.json
+├── tsconfig.json
+└── README.md
+```
+
+-----
+
+## 🤝 Contributing
+
+Contributions are welcome! Please:
+
+1. Fork the repository
+1. Create a feature branch (`git checkout -b feature/my-feature`)
+1. Commit your changes (`git commit -m 'Add some feature'`)
+1. Push to the branch (`git push origin feature/my-feature`)
+1. Open a Pull Request
+
+-----
+
+## 🐛 Known Issues
+
+- Large projects (1000+ files) may take a few minutes to scan
+- Ollama must be running before launching a scan
+- Some minified JS files may produce false positives
+
+-----
+
+## 📅 Changelog
+
+### 0.0.1 — Initial Release
+
+- Basic vulnerability scanning with Semgrep
+- AI fix suggestions via Ollama + CodeLlama
+- Inline diagnostics and report panel
+
+-----
+
+## 📄 License
+
+MIT — see <LICENSE> for details.
+
+-----
+
+## 🙏 Acknowledgements
+
+- [Semgrep](https://semgrep.dev) — Static analysis engine
+- [Ollama](https://ollama.com) — Local LLM runtime
+- [CodeLlama](https://github.com/facebookresearch/codellama) — Code understanding model
+- [OWASP Top 10](https://owasp.org/www-project-top-ten/) — Vulnerability taxonomy
